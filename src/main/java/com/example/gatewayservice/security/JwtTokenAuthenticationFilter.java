@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
     
@@ -58,8 +61,11 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 		try {	// exceptions might be thrown in creating the claims if for example the token is expired
 			
 			// 4. Validate the token
-			Claims claims = Jwts.parser()
-					.setSigningKey(secretKey.getBytes())
+
+			SecretKey key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
+			Claims claims = Jwts.parserBuilder()
+					.setSigningKey(key)
+					.build()
 					.parseClaimsJws(token)
 					.getBody();
 			

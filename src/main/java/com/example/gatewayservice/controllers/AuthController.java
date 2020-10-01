@@ -1,7 +1,11 @@
 package com.example.gatewayservice.controllers;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,14 +27,15 @@ public class AuthController {
 		
 		log.info(secretKey);
 		Long now = System.currentTimeMillis();
+	
+		SecretKey key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 		String token = Jwts.builder()
 			.setSubject("USER")
 			.claim("user", "USER")
 			.claim("authorities", Arrays.asList("USER"))
 			.setIssuedAt(new Date(now))
-			.signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
+			.signWith(key)
 			.compact();
-		
 		
 		return token;
 	}
