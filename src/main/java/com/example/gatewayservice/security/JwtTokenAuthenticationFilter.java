@@ -19,10 +19,18 @@ import io.jsonwebtoken.Jwts;
 
 public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
     
-	private final JwtConfig jwtConfig;
+
+    private final String jwtHeader;
+
+    private final String jwtPrefix;
+
+    private final String secretKey;
 	
-	public JwtTokenAuthenticationFilter(JwtConfig jwtConfig) {
-		this.jwtConfig = jwtConfig;
+	
+	public JwtTokenAuthenticationFilter(String jwtHeader2, String jwtPrefix2, String secretKey2) {
+		this.jwtHeader = jwtHeader2;
+		this.jwtPrefix = jwtPrefix2;
+		this.secretKey = secretKey2;
 	}
 
 	@Override
@@ -30,10 +38,10 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		// 1. get the authentication header. Tokens are supposed to be passed in the authentication header
-		String header = request.getHeader(jwtConfig.getHeader());
+		String header = request.getHeader(jwtHeader);
 		
 		// 2. validate the header and check the prefix
-		if(header == null || !header.startsWith(jwtConfig.getPrefix())) {
+		if(header == null || !header.startsWith(jwtPrefix)) {
 			chain.doFilter(request, response);  		// If not valid, go to the next filter.
 			return;
 		}
@@ -45,13 +53,13 @@ public class JwtTokenAuthenticationFilter extends  OncePerRequestFilter {
 		// And If user tried to access without access token, then he won't be authenticated and an exception will be thrown.
 		
 		// 3. Get the token
-		String token = header.replace(jwtConfig.getPrefix(), "");
+		String token = header.replace(jwtPrefix, "");
 		
 		try {	// exceptions might be thrown in creating the claims if for example the token is expired
 			
 			// 4. Validate the token
 			Claims claims = Jwts.parser()
-					.setSigningKey("UkXp2s5v8y/B?E(H+MbQeShVmYq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaP".getBytes())
+					.setSigningKey(secretKey.getBytes())
 					.parseClaimsJws(token)
 					.getBody();
 			
