@@ -1,7 +1,6 @@
 package com.example.gatewayservice.controllers;
 
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -29,14 +28,13 @@ public class AuthController {
 		Long now = System.currentTimeMillis();
 	
 		SecretKey key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
-		String token = Jwts.builder()
+		return Jwts.builder()
 			.setSubject("USER")
 			.claim("user", "USER")
 			.claim("authorities", Arrays.asList("USER"))
 			.setIssuedAt(new Date(now))
 			.signWith(key)
 			.compact();
-		
-		return token;
+
 	}
 }
