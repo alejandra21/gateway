@@ -24,10 +24,9 @@ To work correctly this microservice required the following services:
 
 Here are the instructions to run the project (without docker):
 
-1. Go to [Eureka server](https://github.com/alejandra21/discovery-server), [City server](https://github.com/alejandra21/city-service) and [Itinerary server](https://github.com/alejandra21/itinerary-service) and run both projects
+1. Go to [Eureka server](https://github.com/alejandra21/discovery-server), [City server](https://github.com/alejandra21/city-service) and [Itinerary server](https://github.com/alejandra21/itinerary-service) and run all projects
 2. Clone **this** repository, in your PC (git clone)
-3. Execute the following command: 
-2. Execute the following command to export env variable an run the project: 
+3. Execute the following command to export env variable an run the project: 
 ```
 cd gateway/config
 export $(cat config.env | xargs)
